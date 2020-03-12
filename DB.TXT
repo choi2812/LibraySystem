@@ -1,0 +1,142 @@
+
+CREATE TABLE OptionType (
+ OptionNumber INT IDENTITY(0,1) NOT NULL,
+ OptionName VARCHAR(30) NOT NULL
+);
+
+ALTER TABLE OptionType ADD CONSTRAINT PK_OptionType PRIMARY KEY (OptionNumber);
+
+
+CREATE TABLE Publishcompany (
+ PNumber INT IDENTITY(0,1) NOT NULL,
+ PName VARCHAR(30) NOT NULL,
+ PNameKana VARCHAR(30) NOT NULL
+);
+
+ALTER TABLE Publishcompany ADD CONSTRAINT PK_Publishcompany PRIMARY KEY (PNumber);
+
+
+CREATE TABLE Genre (
+ GNumber INT IDENTITY(0,1) NOT NULL,
+ GName VARCHAR(20) NOT NULL
+);
+
+ALTER TABLE Genre ADD CONSTRAINT PK_Genre PRIMARY KEY (GNumber);
+
+
+CREATE TABLE LibraryUser (
+ UserNumber VARCHAR(10) NOT NULL,
+ UserName VARCHAR(50) NOT NULL,
+ Kana VARCHAR(50) NOT NULL,
+ TelephoneNumber VARCHAR(15),
+ MailAddress VARCHAR(30),
+ UserPassWord VARCHAR(30)
+);
+
+ALTER TABLE LibraryUser ADD CONSTRAINT PK_LibraryUser PRIMARY KEY (UserNumber);
+
+
+CREATE TABLE Author (
+ ANumber INT IDENTITY(0,1) NOT NULL,
+ AName VARCHAR(30) NOT NULL,
+ ANameKana VARCHAR(30) NOT NULL,
+ ANameInitial VARCHAR(1) NOT NULL
+);
+
+ALTER TABLE Author ADD CONSTRAINT PK_Author PRIMARY KEY (ANumber);
+
+
+CREATE TABLE Book (
+ BookNumber INT IDENTITY(0,1) NOT NULL,
+ Title VARCHAR(30) NOT NULL,
+ TitleKana VARCHAR(60) NOT NULL,
+ SubTitle VARCHAR(30),
+ SubTitleKana VARCHAR(30),
+ ANumber INT NOT NULL,
+ PNumber INT NOT NULL,
+ GNumber INT NOT NULL,
+ BookShelfNumber VARCHAR(2) NOT NULL,
+ PublishedYear INT NOT NULL,
+ OptionNumber INT NOT NULL,
+ Price INT NOT NULL,
+ Etc VARCHAR(50),
+ ISBN VARCHAR(15),
+ OptionSpecification VARCHAR(100)
+);
+
+ALTER TABLE Book ADD CONSTRAINT PK_Book PRIMARY KEY (BookNumber);
+
+
+CREATE TABLE Library (
+ LibraryNumber VARCHAR(10) NOT NULL,
+ BookNumber INT NOT NULL,
+ BorrowFlag INT DEFAULT 0 NOT NULL,
+ AddLibraryDate DATE NOT NULL
+);
+
+ALTER TABLE Library ADD CONSTRAINT PK_Library PRIMARY KEY (LibraryNumber);
+
+
+CREATE TABLE Borrow (
+ BorrowNumber INT IDENTITY(0,1) NOT NULL,
+ UserNumber VARCHAR(10) NOT NULL,
+ LibraryNumber VARCHAR(10) NOT NULL,
+ BorrowDate DATE NOT NULL,
+ ScheduleReturnDate DATE NOT NULL,
+ ReturnDate DATE,
+ ExtensionFlag INT DEFAULT 0 NOT NULL,
+ OptionBorrowFlag INT DEFAULT 0 NOT NULL
+);
+
+ALTER TABLE Borrow ADD CONSTRAINT PK_Borrow PRIMARY KEY (BorrowNumber);
+
+
+CREATE TABLE DeletedLibrary (
+ DeleteNumber INT IDENTITY(0,1) NOT NULL,
+ BookNumber INT NOT NULL,
+ DeleteReason VARCHAR(100) NOT NULL,
+ DeletedDay DATE NOT NULL,
+ LibraryNumber VARCHAR(10) NOT NULL
+);
+
+ALTER TABLE DeletedLibrary ADD CONSTRAINT PK_DeletedLibrary PRIMARY KEY (DeleteNumber);
+
+
+CREATE TABLE Booking (
+ BookingNumber INT IDENTITY(0,1) NOT NULL,
+ UserNumber VARCHAR(10) NOT NULL,
+ RegisterDate DATE,
+ BookingDate DATE NOT NULL,
+ LibraryNumber VARCHAR(10) NOT NULL
+);
+
+ALTER TABLE Booking ADD CONSTRAINT PK_Booking PRIMARY KEY (BookingNumber);
+
+
+ALTER TABLE Book ADD CONSTRAINT FK_Book_ANumber FOREIGN KEY (ANumber) REFERENCES Author (ANumber);
+ALTER TABLE Book ADD CONSTRAINT FK_Book_PNumber FOREIGN KEY (PNumber) REFERENCES Publishcompany (PNumber);
+ALTER TABLE Book ADD CONSTRAINT FK_Book_GNumber FOREIGN KEY (GNumber) REFERENCES Genre (GNumber);
+ALTER TABLE Book ADD CONSTRAINT FK_Book_OptionNumber FOREIGN KEY (OptionNumber) REFERENCES OptionType (OptionNumber);
+
+
+ALTER TABLE Library ADD CONSTRAINT FK_Library_BookNumber FOREIGN KEY (BookNumber) REFERENCES Book (BookNumber);
+
+
+ALTER TABLE Borrow ADD CONSTRAINT FK_Borrow_UserNumber FOREIGN KEY (UserNumber) REFERENCES LibraryUser (UserNumber);
+ALTER TABLE Borrow ADD CONSTRAINT FK_Borrow_LibraryNumber FOREIGN KEY (LibraryNumber) REFERENCES Library (LibraryNumber);
+
+
+ALTER TABLE DeletedLibrary ADD CONSTRAINT FK_DeletedLibrary_BookNumber FOREIGN KEY (BookNumber) REFERENCES Book (BookNumber);
+
+
+ALTER TABLE Booking ADD CONSTRAINT FK_Booking_UserNumber FOREIGN KEY (UserNumber) REFERENCES LibraryUser (UserNumber);
+ALTER TABLE Booking ADD CONSTRAINT FK_Booking_LibraryNumber FOREIGN KEY (LibraryNumber) REFERENCES Library (LibraryNumber);
+
+
+
+ALTER TABLE OptionType ADD CONSTRAINT Unique_UserNumber UNIQUE(OptionName)
+ALTER TABLE Genre ADD CONSTRAINT Unique_GName UNIQUE(GName)
+ALTER TABLE Book ADD CONSTRAINT Unique_ISBN UNIQUE(ISBN)
+
+
+
